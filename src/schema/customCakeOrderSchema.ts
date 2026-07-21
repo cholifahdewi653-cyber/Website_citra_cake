@@ -21,21 +21,21 @@ const numberPreprocess = (val: unknown) => {
 
 // ─── Create Custom Cake Order (User) ──────────────────────────────────────────
 export const createCustomCakeOrderSchema = z.object({
-  baseCakeId: z.string().cuid({ message: "baseCakeId tidak valid" }),
-  tipeCreamId: z.string().cuid({ message: "tipeCreamId tidak valid" }),
-  warnaCreamId: z.string().cuid({ message: "warnaCreamId tidak valid" }),
+  baseCakeId: z.string().min(1, { message: "baseCakeId tidak valid" }),
+  tipeCreamId: z.string().min(1, { message: "tipeCreamId tidak valid" }),
+  warnaCreamId: z.string().min(1, { message: "warnaCreamId tidak valid" }),
 
   layers: z.preprocess(
     jsonArrayPreprocess,
     z
       .array(
         z.object({
-          layerId: z.string().cuid({ message: "layerId tidak valid" }),
-          sizeId: z.string().cuid({ message: "sizeId tidak valid" }),
-          position: z.preprocess(numberPreprocess, z.number().int().min(1, "Posisi layer minimal 1")),
+          layerId: z.string().min(1, { message: "layerId tidak valid" }),
+          sizeId: z.string().min(1, { message: "sizeId tidak valid" }),
+          position: z.preprocess(numberPreprocess, z.number().int().min(1, { message: "Posisi layer minimal 1" })),
         }),
       )
-      .min(1, "Minimal 1 layer harus dipilih"),
+      .min(1, { message: "Minimal 1 layer harus dipilih" }),
   ),
 
   toppings: z.preprocess(
@@ -43,15 +43,15 @@ export const createCustomCakeOrderSchema = z.object({
     z
       .array(
         z.object({
-          toppingId: z.string().cuid({ message: "toppingId tidak valid" }),
-          qty: z.preprocess(numberPreprocess, z.number().int().min(1, "Quantity topping minimal 1").default(1)),
+          toppingId: z.string().min(1, { message: "toppingId tidak valid" }),
+          qty: z.preprocess(numberPreprocess, z.number().int().min(1, { message: "Quantity topping minimal 1" })).default(1),
         }),
       )
       .optional(),
   ),
 
-  lilinId: z.string().cuid({ message: "lilinId tidak valid" }).optional().nullable(),
-  topperId: z.string().cuid({ message: "topperId tidak valid" }).optional().nullable(),
+  lilinId: z.string().min(1, { message: "lilinId tidak valid" }).optional().nullable(),
+  topperId: z.string().min(1, { message: "topperId tidak valid" }).optional().nullable(),
 
   ucapan: z.string().optional().nullable(),
   catatan: z.string().optional().nullable(),
