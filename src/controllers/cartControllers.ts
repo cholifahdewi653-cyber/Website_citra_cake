@@ -4,6 +4,7 @@ import {
   getAllCartService,
   addToCartService,
   deleteCartService,
+  getCartByIdService,
 } from "../service/cartService";
 import { addToCartSchema, deleteCartItemSchema } from "../schema/cartSchema";
 import { wrap } from "../utils/helper/wrap.helpers";
@@ -43,4 +44,16 @@ export const deleteCart = wrap(async (req: Request, res: Response) => {
   res
     .status(200)
     .json({ success: true, message: "Item berhasil dihapus dari cart" });
+});
+export const getCartById = wrap(async (req: Request, res: Response) => {
+  if (!req.user) throw new AuthError();
+
+  const { cartItemId } = validate(deleteCartItemSchema, req.params);
+
+  const data = await getCartByIdService(req.user.id, cartItemId);
+
+  res.status(200).json({
+    success: true,
+    data,
+  });
 });

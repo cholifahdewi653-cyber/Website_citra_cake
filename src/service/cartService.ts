@@ -195,3 +195,22 @@ export const deleteCartService = async (userId: string, cartItemId: string) => {
 
   await prisma.cartItem.delete({ where: { id: cartItemId } });
 };
+export const getCartByIdService = async (
+  userId: string,
+  cartItemId: string,
+) => {
+  const cart = await prisma.cartItem.findUnique({
+    where: { id: cartItemId },
+    include: {
+      product: true,
+      productSize: true,
+      customCake: true,
+    },
+  });
+
+  if (!cart) throw new NotFoundError("Item cart");
+
+  if (cart.userId !== userId) throw new ForbiddenError();
+
+  return cart;
+};
