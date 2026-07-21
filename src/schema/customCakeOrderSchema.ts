@@ -134,3 +134,4 @@ export type CreateCustomCakeOrderServiceInput =
     foto?: string | null;
     fotoPublicId?: string | null;
   };
+  
