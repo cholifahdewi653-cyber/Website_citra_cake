@@ -25,6 +25,17 @@ app.use(express.json({ limit: "50mb" }));
 app.use(express.urlencoded({ extended: true, limit: "50mb" }));
 app.use(cookieParser());
 
+// Debug request masuk
+app.use((req, res, next) => {
+  console.log("========== REQUEST MASUK ==========");
+  console.log("METHOD:", req.method);
+  console.log("URL:", req.originalUrl);
+  console.log("BODY:", req.body);
+  console.log("TYPE BODY:", typeof req.body);
+  next();
+});
+
+//Routes
 app.use("/api/auth", authRoutes);
 app.use("/api/products", productRoutes);
 app.use("/api/custom-cakes", customCakeRoutes);
