@@ -2,8 +2,9 @@ import { z } from "zod";
 
 export const createOrderSchema = z.object({
   // Item checkout
-  cartItemIds: z.array(z.string().cuid()).min(1, "Minimal pilih 1 item dari cart"),
-
+ cartItemIds: z
+  .array(z.string().uuid())
+  .min(1, "Minimal pilih 1 item dari cart"),
   // Data pengiriman
   recipientName: z.string().min(1, "Nama penerima wajib diisi").optional(),
   phoneNumber: z.string().min(1, "Nomor telepon wajib diisi").optional(),
