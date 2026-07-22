@@ -666,6 +666,11 @@ export const getOrderDetailService = async (
   userId: string,
   role: string,
 ) => {
+
+  console.log("ORDER ID:", orderId);
+  console.log("LOGIN USER:", userId);
+  console.log("ROLE:", role);
+
   const order = await prisma.order.findUnique({
     where: { id: orderId },
     include: {
@@ -674,26 +679,7 @@ export const getOrderDetailService = async (
         include: {
           product: true,
           productSize: true,
-          customCake: {
-            include: {
-              baseCake: true,
-              tipeCream: true,
-              warnaCream: true,
-              topper: true,
-              lilin: true,
-              layers: {
-                include: {
-                  layer: true,
-                  size: true,
-                },
-              },
-              toppings: {
-                include: {
-                  topping: true,
-                },
-              },
-            },
-          },
+          customCake: true,
         },
       },
       trackings: true,
@@ -702,10 +688,14 @@ export const getOrderDetailService = async (
     },
   });
 
+  console.log("ORDER:", order);
+
   if (!order) throw new NotFoundError("Order");
 
   if (role === "USER" && order.userId !== userId) {
-    throw new ForbiddenError("Kamu tidak memiliki hak akses untuk melihat pesanan ini.");
+    throw new ForbiddenError(
+      "Kamu tidak memiliki hak akses untuk melihat pesanan ini."
+    );
   }
 
   return order;
