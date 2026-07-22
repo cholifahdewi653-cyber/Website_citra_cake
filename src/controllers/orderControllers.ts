@@ -140,7 +140,15 @@ export const resolveCancel = wrap(async (req: Request, res: Response) => {
 // ─── TASK 8: USER — Upload Payment Proof ──────────────────────────────────────
 export const uploadPaymentProof = wrap(async (req: Request, res: Response) => {
   if (!req.user) throw new AuthError();
-  if (!req.file) throw new ValidationError({ bukti: ["Bukti transfer wajib diunggah"] });
+
+  console.log("REQ.FILE =", req.file);
+  console.log("REQ.BODY =", req.body);
+
+  if (!req.file) {
+    throw new ValidationError({
+      bukti: ["Bukti transfer wajib diunggah"],
+    });
+  }
 
   const { id } = req.params as { id: string };
   const data = await uploadPaymentProofService(id, req.user.id, req.file.buffer);
