@@ -64,6 +64,8 @@ export const createOrderService = async (
   if (Object.keys(errors).length > 0) throw new ValidationError(errors);
 
   // 4. Load cart items
+  console.log("USER ID:", userId);
+  console.log("CART IDS:", body.cartItemIds);
   const cartItems = await prisma.cartItem.findMany({
     where: {
       id: { in: body.cartItemIds },
