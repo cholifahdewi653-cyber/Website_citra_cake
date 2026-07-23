@@ -9,6 +9,12 @@ cloudinary.config({
   secure: true,
 });
 
+console.log({
+  cloud_name: process.env.CLOUDINARY_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET,
+});
+
 // upload single file ke cloudinary
 export const uploadToCloudinary = async ({
   fileBuffer = null,
