@@ -475,32 +475,43 @@ export const uploadPaymentProofService = async (
   userId: string,
   fileBuffer: Buffer,
 ) => {
-  const order = await prisma.order.findUnique({ where: { id: orderId } });
-  if (!order) throw new NotFoundError("Order");
-  if (order.userId !== userId) throw new ValidationError({ order: ["Pesanan tidak valid untuk user ini"] });
+  try {
+    console.log("=== STEP 1 ===");
 
-  if (order.status !== "PENDING" || (order as any).paymentMethod !== "TRANSFER") {
-    throw new ValidationError({ order: ["Bukti transfer hanya bisa diunggah untuk order PENDING bermetode TRANSFER"] });
+    const order = await prisma.order.findUnique({
+      where: { id: orderId },
+    });
+
+    console.log(order);
+
+    console.log("=== STEP 2 ===");
+
+    const uploadResult = await uploadToCloudinary({
+      fileBuffer,
+      folder: "payment_submission_folder",
+    });
+
+    console.log(uploadResult);
+
+    console.log("=== STEP 3 ===");
+
+    const submission = await prisma.paymentSubmission.create({
+      data: {
+        orderId,
+        paymentMethod: `TRANSFER ${(order as any).bank || ""}`.trim(),
+        proofUrl: uploadResult.url,
+        proofId: uploadResult.id,
+        status: "UNPAID",
+      },
+    });
+
+    console.log(submission);
+
+    return submission;
+  } catch (e) {
+    console.error(e);
+    throw e;
   }
-
-  // Upload ke Cloudinary
-  const uploadResult = await uploadToCloudinary({
-    fileBuffer,
-    folder: "payment_submission_folder",
-  });
-
-  // Buat record PaymentSubmission
-  const submission = await prisma.paymentSubmission.create({
-    data: {
-      orderId,
-      paymentMethod: `TRANSFER ${(order as any).bank || ""}`.trim(),
-      proofUrl: uploadResult.url,
-      proofId: uploadResult.id,
-      status: "UNPAID", // menunggu verifikasi admin
-    },
-  });
-
-  return submission;
 };
 
 // ─── TASK 8: USER — Edit Payment ──────────────────────────────────────────────
