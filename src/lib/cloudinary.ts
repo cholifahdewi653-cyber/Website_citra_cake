@@ -22,13 +22,24 @@ export const uploadToCloudinary = async ({
   if (fileBuffer) {
     return new Promise((resolve, reject) => {
       const stream = cloudinary.uploader.upload_stream(
-        options,
-        (error, result) => {
-          if (error || !result)
-            return reject(error ?? new Error("Gagal Upload File"));
-          resolve({ url: result.url, id: result.public_id });
-        },
-      );
+  options,
+  (error, result) => {
+    console.log("=== CLOUDINARY ERROR ===");
+    console.dir(error, { depth: null });
+
+    console.log("=== CLOUDINARY RESULT ===");
+    console.dir(result, { depth: null });
+
+    if (error || !result) {
+      return reject(error ?? new Error("Gagal Upload File"));
+    }
+
+    resolve({
+      url: result.url,
+      id: result.public_id,
+    });
+  },
+);
       stream.end(fileBuffer);
     });
   }
