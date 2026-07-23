@@ -20,29 +20,31 @@ export const uploadToCloudinary = async ({
 
   //   upload file ke cloudinary
   if (fileBuffer) {
-    return new Promise((resolve, reject) => {
-      const stream = cloudinary.uploader.upload_stream(
-  options,
-  (error, result) => {
-    console.log("=== CLOUDINARY ERROR ===");
-    console.dir(error, { depth: null });
+  return new Promise((resolve, reject) => {
+    const stream = cloudinary.uploader.upload_stream(
+      options,
+      (error, result) => {
+        console.log("UPLOAD RESULT =", result);
+        console.log("UPLOAD ERROR =", error);
 
-    console.log("=== CLOUDINARY RESULT ===");
-    console.dir(result, { depth: null });
+        if (error) {
+          return reject(error);
+        }
 
-    if (error || !result) {
-      return reject(error ?? new Error("Gagal Upload File"));
-    }
+        if (!result) {
+          return reject(new Error("Result kosong"));
+        }
 
-    resolve({
-      url: result.url,
-      id: result.public_id,
-    });
-  },
-);
-      stream.end(fileBuffer);
-    });
-  }
+        resolve({
+          url: result.secure_url,
+          id: result.public_id,
+        });
+      }
+    );
+
+    stream.end(fileBuffer);
+  });
+}
 
   //   upload url
   if (url) {
