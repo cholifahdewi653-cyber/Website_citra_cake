@@ -9,11 +9,12 @@ cloudinary.config({
 
 (async () => {
   try {
-    const result = await cloudinary.api.ping();
-    console.log("SUCCESS");
+    const result = await cloudinary.uploader.upload(
+      "https://res.cloudinary.com/demo/image/upload/sample.jpg"
+    );
+
     console.log(result);
   } catch (err) {
-    console.error("ERROR");
     console.error(err);
   }
 })();
